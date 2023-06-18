@@ -8,12 +8,16 @@ const TABLE = config.connectors.chollometro.ddbbTable;
 
 async function findExistingGuid(guid) {
 	try {
-		logger.debug(__filename, 'findExistingGuid', 'Checking if guid already exists in DDBB');
+		logger.debug(
+			__filename,
+			'findExistingGuid',
+			'Checking if guid already exists in DDBB',
+		);
 		const existingDataId = await pgService.query(
 			`
       select *
       from ${TABLE}
-      where guid = '${guid}'
+      where guid = '${guid}'u
       `,
 		);
 		return existingDataId.rows;
@@ -23,8 +27,16 @@ async function findExistingGuid(guid) {
 }
 
 async function insertRecord(
-	guid, title, link, pubDate, image, merchantName,
-	price, contentSnippet, content, categories,
+	guid,
+	title,
+	link,
+	pubDate,
+	image,
+	merchantName,
+	price,
+	contentSnippet,
+	content,
+	categories,
 ) {
 	try {
 		logger.debug(__filename, 'insertRecord', 'Inserting in ddbb new record');

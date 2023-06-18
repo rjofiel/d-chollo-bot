@@ -2,11 +2,7 @@
 
 // config and services
 const chollosConnector = require('./chollometro/chollometro.connector');
-const cinesaConnector = require('./cinesa/cinesa.connector');
 const config = require('../config');
-const digitalOceanConnector = require('./digitalocean/digitalocean.connector');
-const elitetorrentConnector = require('./elitetorrent/elitetorrent.connector');
-const eltiemponetConnector = require('./eltiemponet/eltiemponet.connector');
 const logger = require('../services/logging.service');
 
 function _connectorConfigMapper({ handler, name }) {
@@ -26,15 +22,8 @@ function _connectorConfigMapper({ handler, name }) {
 function _loadConnectorsConfig() {
 	try {
 		logger.debug(__filename, '_loadConnectorsConfig', 'Loading connectors config');
-		return [
-			{ handler: chollosConnector, name: config.channels.chollometro },
-			{ handler: cinesaConnector, name: config.channels.cinesa },
-			{ handler: digitalOceanConnector, name: config.channels.digitalocean },
-			{ handler: elitetorrentConnector, name: config.channels.elitetorrent },
-			{ handler: eltiemponetConnector, name: config.channels.eltiemponet },
-		].map(_connectorConfigMapper);
-	}
-	catch (e) {
+		return [{ handler: chollosConnector, name: config.channels.chollometro }].map(_connectorConfigMapper);
+	} catch (e) {
 		logger.error(__filename, '_loadConnectorsConfig', e);
 	}
 }
@@ -58,6 +47,7 @@ function start(channels) {
 			connector.enabled ? _scheduleConnector(connector, channels[connector.name]) : '';
 		});
 	} catch (e) {
+		console.log('zzz', e);
 		logger.error(__filename, 'start', e);
 	}
 }

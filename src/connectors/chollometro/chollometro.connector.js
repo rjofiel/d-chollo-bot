@@ -8,17 +8,20 @@ const discordService = require('../../services/discord.service');
 const logger = require('../../services/logging.service');
 const rssService = require('../../services/rss.parser.service');
 
-async function startConnector(channel) {
+async function startConnector(channelObj) {
 	try {
 		logger.info(__filename, 'startConnector', 'Initializing Chollometro connector');
-		const rssArray = await rssService.getRss(
-			config.connectors.chollometro.url, _buildCustomRssFields(),
-		);
+		const { channel, apiChannels } = channelObj;
+		const rssArray = await rssService.getRss(config.connectors.chollometro.url, _buildCustomRssFields());
 		const filteredItems = await _getNotPublishedItems(rssArray.items);
-		filteredItems.forEach(formatedCholloItem => {
-			channel.send(_enrichMessage(formatedCholloItem));
-		});
+
+		for (const formatedCholloItem of filteredItems) {
+			await apiChannels.createMessage(channel.id, {
+				embeds: [_enrichMessage(formatedCholloItem)],
+			});
+		}
 	} catch (e) {
+		console.error(e);
 		logger.error(__filename, 'startConnector', e);
 	}
 }
@@ -70,7 +73,6 @@ function _enrichMessage(formatedCholloItem) {
 			title: formatedCholloItem.title,
 			URL: formatedCholloItem.link,
 		});
-
 	} catch (e) {
 		logger.error(__filename, '_enrichMessage', e);
 	}
