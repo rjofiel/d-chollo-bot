@@ -5,13 +5,16 @@ services:
     image: postgres:11.6
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: changeme
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
       PGDATA: /data/postgres
+    secrets:
+      - db_password
+      - discord_api_key
     volumes:
       - ./volumes/postgres:/data/postgres
       - ./postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "5434:5432"
+      - '5434:5432'
     restart: unless-stopped
 
   discord_bot:
@@ -21,24 +24,22 @@ services:
     depends_on:
       - discord_bot_postgres
     environment:
-      DISCORD_APIKEY: {{ HERE YOUR DISCORD API KEY }}
+      DISCORD_APIKEY_FILE: /run/secrets/discord_api_key
       LOG_LEVEL: info
-      CONNECTORS_CHOLLOMETRO_ENABLED: "true"
+      CONNECTORS_CHOLLOMETRO_ENABLED: 'true'
       CONNECTORS_CHOLLOMETRO_TIMEOUT: 900000
-      CONNECTORS_CINESA_ENABLED: "true"
-      CONNECTORS_CINESA_TIMEOUT: 43200000
-      CONNECTORS_DIGITALOCEAN_TIMEOUT: 86400000
-      CONNECTORS_DIGITALOCEAN_TOKEN: {{ HERE YOUR DIGITAL OCEAN TOKEN }}
-      CONNECTORS_DIGITALOCEAN_ENABLED: "true"
-      CONNECTORS_ELITETORRENT_ENABLED: "true"
-      CONNECTORS_ELITETORRENT_TIMEOUT: 43200000
-      CONNECTORS_ELTIEMPONET_ENABLED: "true"
-      CONNECTORS_ELTIEMPONET_CITYCODE: 28
-      CONNECTORS_ELTIEMPONET_TIMEOUT: 21600000
-      CONNECTORS_ELTIEMPONET_TOWNCODE: 28004
       PGHOST: discord_bot_postgres
-      PGPASSWORD: changeme
+      PGPASSWORD_FILE: /run/secrets/db_password
       PGUSER: postgres
       PGDATABASE: connectors
       PGPORT: 5432
+    secrets:
+      - db_password
+      - discord_api_key
     restart: always
+
+secrets:
+  db_password:
+    file: pass.txt
+  discord_api_key:
+    file: discord_api_key.txt

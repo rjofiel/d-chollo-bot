@@ -72,4 +72,5 @@ npm-debug.log
 package-lock.json
 
 # Volumes
+*/*.txt
 */volumes

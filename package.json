@@ -1,5 +1,5 @@
 {
-  "name": "discord-geoffrey-bot",
+  "name": "d-chollo-bot",
   "version": "1.0.1",
   "description": "Gather some info from different sources and send it to discord",
   "main": "index.js",
@@ -10,22 +10,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mdemou/discord-geoffrey-bot"
+    "url": "git+https://github.com/rjofiel/d-chollo-bot"
   },
   "keywords": [
     "chollometro",
-    "cinesa",
-    "digitalocean",
     "discord",
-    "elitetorrent",
-    "eltiemponet"
+    "bot"
   ],
-  "author": "mdemou",
+  "author": "rjofiel",
+  "contributors": [
+    {
+      "name": "Javier Moure",
+      "url": "https://github.com/mdemou"
+    }
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mdemou/discord-geoffrey-bot/issues"
+    "url": "https://github.com/rjofiel/d-chollo-bot/pulls"
   },
-  "homepage": "https://github.com/mdemou/discord-geoffrey-bot",
+  "homepage": "https://github.com/rjofiel/d-chollo-bot",
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint",
@@ -33,16 +36,18 @@
     }
   },
   "dependencies": {
-    "axios": "0.19.2",
+    "@discordjs/builders": "^1.6.3",
+    "@discordjs/core": "0.6.0",
+    "@discordjs/ws": "^0.8.3",
+    "axios": "0.21.1",
     "cheerio": "1.0.0-rc.3",
-    "discord.js": "11.3.2",
     "dotenv": "8.2.0",
     "pg": "7.17.1",
     "pino": "5.16.0",
     "rss-parser": "3.7.3"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
+    "eslint": "^8.43.0",
     "husky": "^4.2.1"
   }
 }

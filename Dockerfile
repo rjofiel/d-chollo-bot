@@ -1,4 +1,4 @@
-FROM node:12.14.1-alpine3.11
+FROM node:18.12.1-alpine
 WORKDIR /usr/src/app
 COPY package.json .
 # For npm@5 or later, copy package-lock.json as well

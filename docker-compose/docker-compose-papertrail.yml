@@ -1,16 +1,28 @@
 version: '3.5'
+
+secrets:
+  db_password:
+    file: ./pass.txt
+  discord_api_key:
+    file: ./discord_api_key.txt
+
 services:
   discord_bot_postgres:
     container_name: discord_bot_postgres
     image: postgres:11.6
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "{{ HERE YOUR PAPERTRAIL LOG DESTINATION }}"
-        tag: "{{.Name}}/{{.ID}}"
+    command: 
+      ls /run/secrets
+    secrets:
+      - discord_api_key
+      - db_password
+    # logging:
+    #   driver: syslog
+    #   options:
+    #     syslog-address: "{{ HERE YOUR PAPERTRAIL LOG DESTINATION }}"
+    #     tag: "{{.Name}}/{{.ID}}"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: changeme
+      POSTGRES_USER: discord
+      POSTGRES_PASSWORD: /run/secrets/db_password
       PGDATA: /data/postgres
     volumes:
       - ./volumes/postgres:/data/postgres
@@ -23,32 +35,24 @@ services:
     container_name: discord_bot
     # image: discord_bot:1
     build: ./../
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "{{ HERE YOUR PAPERTRAIL LOG DESTINATION }}"
-        tag: "{{.Name}}/{{.ID}}"
+    # logging:
+    #   driver: syslog
+    #   options:
+    #     syslog-address: "{{ HERE YOUR PAPERTRAIL LOG DESTINATION }}"
+    #     tag: "{{.Name}}/{{.ID}}"
     depends_on:
       - discord_bot_postgres
     environment:
-      DISCORD_APIKEY: {{ HERE YOUR DISCORD API KEY }}
+      DISCORD_APIKEY: /run/secrets/discord_api_key
       LOG_LEVEL: info
       CONNECTORS_CHOLLOMETRO_ENABLED: "true"
       CONNECTORS_CHOLLOMETRO_TIMEOUT: 900000
-      CONNECTORS_CINESA_ENABLED: "true"
-      CONNECTORS_CINESA_TIMEOUT: 43200000
-      CONNECTORS_DIGITALOCEAN_TIMEOUT: 86400000
-      CONNECTORS_DIGITALOCEAN_TOKEN: {{ HERE YOUR DIGITAL OCEAN TOKEN }}
-      CONNECTORS_DIGITALOCEAN_ENABLED: "true"
-      CONNECTORS_ELITETORRENT_ENABLED: "true"
-      CONNECTORS_ELITETORRENT_TIMEOUT: 43200000
-      CONNECTORS_ELTIEMPONET_ENABLED: "true"
-      CONNECTORS_ELTIEMPONET_CITYCODE: 28
-      CONNECTORS_ELTIEMPONET_TIMEOUT: 21600000
-      CONNECTORS_ELTIEMPONET_TOWNCODE: 28004
       PGHOST: discord_bot_postgres
-      PGPASSWORD: changeme
-      PGUSER: postgres
+      PGPASSWORD: /run/secrets/db_password
+      PGUSER: discord
       PGDATABASE: connectors
       PGPORT: 5432
+    secrets:
+      - discord_api_key
+      - db_password
     restart: always
