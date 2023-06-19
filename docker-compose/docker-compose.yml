@@ -21,7 +21,7 @@ services:
 
   discord_bot:
     container_name: discord_bot
-    # image: discord_bot:1
+    image: d_chollo_bot:0.0.1
     build: ./../
     depends_on:
       - discord_bot_postgres
