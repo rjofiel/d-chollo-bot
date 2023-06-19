@@ -16,16 +16,18 @@ function app() {
 				const allChannels = await c.api.guilds.getChannels(guild.id);
 				const channels = {
 					chollometro: {
-						channel: allChannels.find((cc) => cc.name === 'mierda-del-bot'),
+						channel: allChannels.filter((cc) => cc.name === 'mierda-del-bot' || cc.name === '🔶ofertas🔶'),
 						apiChannels: c.api.channels,
 					},
 				};
 
-				await c.api.channels
-					.createMessage(channels.chollometro.channel.id, {
-						content: 'Chollometro',
-					})
-					.catch((e) => console.log('ERR', e));
+				for (const channel of channels.chollometro.channel) {
+					await c.api.channels
+						.createMessage(channel.id, {
+							content: 'Chollometro',
+						})
+						.catch((e) => console.log('ERR', e));
+				}
 
 				connectorService.start(channels);
 			}

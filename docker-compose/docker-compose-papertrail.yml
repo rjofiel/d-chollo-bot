@@ -28,7 +28,9 @@ services:
       - ./volumes/postgres:/data/postgres
       - ./postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "5434:5432"
+      - "5435:5432"
+    expose:
+      - "5435"
     restart: unless-stopped
 
   discord_bot:

@@ -3,7 +3,7 @@ CREATE DATABASE connectors;
 
 CREATE TABLE connectors.public.chollometro (
   guid varchar(200) NOT NULL,
-  CONSTRAINT guid_pkey PRIMARY KEY (guid),
+  channel_id varchar(100) NOT NULL,
   base_url varchar(150),
   title varchar(150),
   url_chollo varchar(200),
@@ -14,5 +14,6 @@ CREATE TABLE connectors.public.chollometro (
   content_snippet text,
   content text,
   categories jsonb,
-  date_created timestamp NOT NULL DEFAULT current_timestamp
+  date_created timestamp NOT NULL DEFAULT current_timestamp,
+  PRIMARY KEY (guid, channel_id)
 );

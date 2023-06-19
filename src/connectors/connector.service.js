@@ -47,7 +47,6 @@ function start(channels) {
 			connector.enabled ? _scheduleConnector(connector, channels[connector.name]) : '';
 		});
 	} catch (e) {
-		console.log('zzz', e);
 		logger.error(__filename, 'start', e);
 	}
 }

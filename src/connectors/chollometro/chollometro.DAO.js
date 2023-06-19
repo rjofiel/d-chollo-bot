@@ -6,20 +6,21 @@ const logger = require('../../services/logging.service');
 const pgService = require('../../services/pg.service');
 const TABLE = config.connectors.chollometro.ddbbTable;
 
-async function findExistingGuid(guid) {
+async function findExistingGuid(guid, channelId) {
 	try {
 		logger.debug(
 			__filename,
 			'findExistingGuid',
 			'Checking if guid already exists in DDBB',
 		);
-		const existingDataId = await pgService.query(
-			`
-      select *
-      from ${TABLE}
-      where guid = '${guid}'u
-      `,
-		);
+
+		const query = {
+			name: 'fetch-offers',
+			text: `SELECT * FROM ${TABLE} where guid = $1 AND channel_id = $2`,
+			values: [guid, channelId],
+		};
+
+		const existingDataId = await pgService.query(query);
 		return existingDataId.rows;
 	} catch (e) {
 		logger.error(__filename, 'findExistingGuid', e);
@@ -37,20 +38,21 @@ async function insertRecord(
 	contentSnippet,
 	content,
 	categories,
+	channelId,
 ) {
 	try {
 		logger.debug(__filename, 'insertRecord', 'Inserting in ddbb new record');
 
-		await pgService.query(
+		await pgService.insert(
 			`
       INSERT INTO ${TABLE} (
 				guid, base_url, title, url_chollo, publish_date, image,
-				merchant, price, content_snippet, content, categories
+				merchant, price, content_snippet, content, categories, channel_id
 			)
       VALUES (
 				'${guid}', '${config.connectors.chollometro.baseUrl}', '${title}', '${link}',
 				'${pubDate}', '${image}', '${merchantName}', '${price}', '${contentSnippet}',
-				'${content}', '${categories}'
+				'${content}', '${categories}', ${channelId}
       )
       `,
 		);

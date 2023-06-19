@@ -13,25 +13,28 @@ async function startConnector(channelObj) {
 		logger.info(__filename, 'startConnector', 'Initializing Chollometro connector');
 		const { channel, apiChannels } = channelObj;
 		const rssArray = await rssService.getRss(config.connectors.chollometro.url, _buildCustomRssFields());
-		const filteredItems = await _getNotPublishedItems(rssArray.items);
 
-		for (const formatedCholloItem of filteredItems) {
-			await apiChannels.createMessage(channel.id, {
-				embeds: [_enrichMessage(formatedCholloItem)],
-			});
+		for (const c of channel) {
+			const filteredItems = await _getNotPublishedItems(rssArray.items, c.id);
+			for (const formatedCholloItem of filteredItems) {
+				await apiChannels.createMessage(c.id, {
+					embeds: [_enrichMessage(formatedCholloItem)],
+				});
+			}
 		}
+
 	} catch (e) {
 		console.error(e);
 		logger.error(__filename, 'startConnector', e);
 	}
 }
 
-async function _getNotPublishedItems(rssItems) {
+async function _getNotPublishedItems(rssItems, channelId) {
 	try {
 		logger.debug(__filename, '_getNotPublishedItems', 'Getting not published items');
 		const nonSentItems = [];
 		for (const item of rssItems) {
-			const myRows = await chollometroDAO.findExistingGuid(item.guid);
+			const myRows = await chollometroDAO.findExistingGuid(item.guid, channelId);
 			if (myRows.length === 0) {
 				const formatedCholloItem = chollometroModel.formatChollo(item);
 				logger.debug(__filename, '_getNotPublishedItems', 'Inserting into DDBB');
@@ -39,6 +42,7 @@ async function _getNotPublishedItems(rssItems) {
 					formatedCholloItem.guid, formatedCholloItem.title, formatedCholloItem.link, formatedCholloItem.pubDate,
 					formatedCholloItem.image, formatedCholloItem.merchant, formatedCholloItem.price,
 					formatedCholloItem.contentSnippet, formatedCholloItem.content, formatedCholloItem.categories,
+					channelId,
 				);
 				nonSentItems.push(formatedCholloItem);
 			}

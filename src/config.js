@@ -15,10 +15,10 @@ module.exports = {
 		chollometro: {
 			baseUrl: 'https://www.chollometro.com',
 			ddbbTable: 'chollometro',
-			enabled: JSON.parse(process.env.CONNECTORS_CHOLLOMETRO_ENABLED || true),
+			enabled: JSON.parse(process.env.CONNECTORS_CHOLLOMETRO_ENABLED),
 			messageColor: [255, 121, 0],
-			timeout: parseInt(process.env.CONNECTORS_CHOLLOMETRO_TIMEOUT || 100000, 10) || 300000, // in ms
-			url: 'https://www.chollometro.com/rss',
+			timeout: parseInt(process.env.CONNECTORS_CHOLLOMETRO_TIMEOUT, 10), // in ms
+			url: 'https://www.chollometro.com/rss/populares',
 		},
 	},
 	logLevel: process.env.LOG_LEVEL || 'debug',
